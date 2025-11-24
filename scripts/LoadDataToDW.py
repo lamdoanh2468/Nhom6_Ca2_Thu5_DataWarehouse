@@ -3,9 +3,7 @@ from db_connector import get_connection, log_etl
 from datetime import datetime
 import warnings
 import re
-import shutil 
-import glob
-import os
+
 # Tắt cảnh báo không cần thiết
 warnings.filterwarnings('ignore')
 
@@ -108,16 +106,6 @@ def run_dw_process():
     conn_staging = None
     
     try:
-        # 1. Thiết lập đường dẫn
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        processed_path = os.path.join(base_dir, 'data', 'processed')
-        
-        archive_path = os.path.join(base_dir, 'data', 'archive')
-        if not os.path.exists(archive_path):
-            os.makedirs(archive_path)
-        # ---------------------------------------
-
-        csv_files = glob.glob(os.path.join(processed_path, "*.csv"))
         # 1. Lấy dữ liệu từ Staging
         conn_staging = get_connection('staging')
         if not conn_staging: return
@@ -181,15 +169,6 @@ def run_dw_process():
             conn_dw.commit()
             
             print(f"✅ THÀNH CÔNG: Đã nạp {len(fact_rows)} dòng vào Fact_Laptop.")
-            print("📦 Đang di chuyển file đã nạp sang 'data/archive'...")
-            for file in csv_files:
-                file_name = os.path.basename(file)
-                try:
-                    # Di chuyển file từ processed -> archive
-                    shutil.move(file, os.path.join(archive_path, file_name))
-                    print(f"   -> Đã lưu kho: {file_name}")
-                except Exception as e_move:
-                    print(f"   ⚠️ Không thể di chuyển file {file_name}: {e_move}")
             log_etl(process_name, "Success", f"Nạp DW thành công {len(fact_rows)} dòng.", len(fact_rows))
         else:
             print("⚠️ Không có dữ liệu để nạp vào Fact.")

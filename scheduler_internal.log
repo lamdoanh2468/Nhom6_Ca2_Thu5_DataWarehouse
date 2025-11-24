@@ -1,0 +1,101 @@
+
+🚀 HỆ THỐNG KHỞI ĐỘNG LẠI VÀO LÚC: 2025-11-24 16:36:01.853359
+📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
+🧪 Đang chạy chế độ TEST. Giờ kích hoạt: 14:45
+⏳ Đang chờ đến 14:45 để chạy...
+
+🚀 HỆ THỐNG KHỞI ĐỘNG LẠI VÀO LÚC: 2025-11-24 16:40:34.674951
+📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
+🧪 Đang chạy chế độ TEST. Giờ kích hoạt: 16:42
+⏳ Đang chờ đến 16:42 để chạy...
+
+========== BẮT ĐẦU JOB LÚC: 2025-11-24 16:42:00 ==========
+
+--- BƯỚC 0: CRAWL DATA (Thu thập dữ liệu) ---
+ℹ️ [Running] Crawl_Data_Process: Bắt đầu khởi động trình duyệt để cào dữ liệu...
+🕷️ [Crawl] Đang truy cập: https://cellphones.com.vn/laptop.html
+🔎 [Crawl] Tìm thấy 30 sản phẩm trên trang danh sách.
+🚀 [Crawl] Bắt đầu vào chi tiết 5 sản phẩm...
+   -> Đang xem: Laptop ASUS Gaming V16 V3607VM-RP044W...
+   -> Đang xem: Laptop Dell Inspiron 14 5440 D0F3W - Nhập khẩu chính hãng...
+   -> Đang xem: Laptop ASUS Gaming V16 V3607VU-RP343W...
+   -> Đang xem: Laptop ASUS Vivobook S14 S3407QA-SF043WS...
+   -> Đang xem: Laptop Lenovo LOQ 15AHP10 83JG0047VN...
+✅ Đã lưu 5 dòng vào file: laptop_20251124_164408.csv
+✅ [Success] Crawl_Data_Process: Đã lưu 5 dòng vào file: laptop_20251124_164408.csv
+
+--- BƯỚC 1: STAGING (Nạp vùng đệm) ---
+ℹ️ [Running] Staging_Load_Process: Bắt đầu quét file CSV để nạp Staging...
+🧹 Đang làm sạch bảng stg_laptops...
+📂 Đang xử lý file: laptop_20251124_161111.csv
+   ✅ Đã nạp 5 dòng.
+   📦 Đã chuyển file vào 'data/processed'.
+📂 Đang xử lý file: laptop_20251124_164408.csv
+   ✅ Đã nạp 5 dòng.
+   📦 Đã chuyển file vào 'data/processed'.
+🎉 Hoàn tất Staging. Xử lý 2 file, nạp tổng cộng 10 dòng.
+✅ [Success] Staging_Load_Process: Hoàn tất Staging. Xử lý 2 file, nạp tổng cộng 10 dòng.
+
+--- BƯỚC 2: DATA WAREHOUSE (Làm sạch & Lưu kho) ---
+ℹ️ [Running] ETL_DW_Daily: Bắt đầu nạp dữ liệu vào DW...
+📥 Đang đọc dữ liệu từ Staging...
+🔄 [Transform] Đang xử lý và làm sạch dữ liệu...
+   -> Dữ liệu sạch: 10 dòng (Đã loại 0 dòng rác)
+🚀 Đang nạp vào Dimensions & Fact...
+✅ THÀNH CÔNG: Đã nạp 10 dòng vào Fact_Laptop.
+✅ [Success] ETL_DW_Daily: Nạp DW thành công 10 dòng.
+
+--- BƯỚC 3: DATA MART (Tổng hợp báo cáo) ---
+ℹ️ [Running] ETL_DataMart_Daily: Bắt đầu tổng hợp dữ liệu sang bảng Agg_LaptopSummary...
+📊 Đang tính toán các chỉ số tổng hợp từ DW...
+🚀 Đang nạp 3 dòng vào bảng Agg_LaptopSummary...
+✅ THÀNH CÔNG: Đã cập nhật bảng Agg_LaptopSummary cho 3 nhãn hàng.
+✅ [Success] ETL_DataMart_Daily: Đã tổng hợp 3 dòng vào Agg_LaptopSummary.
+
+✅ [Job] HOÀN TẤT TOÀN BỘ QUY TRÌNH LÚC: 16:44:08
+==============================================================
+
+
+🚀 HỆ THỐNG KHỞI ĐỘNG LẠI VÀO LÚC: 2025-11-24 16:55:13.399592
+📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
+🧪 Đang chạy chế độ TEST. Giờ kích hoạt: 16:56
+⏳ Đang chờ đến 16:56 để chạy...
+
+========== BẮT ĐẦU JOB LÚC: 2025-11-24 16:56:00 ==========
+
+--- BƯỚC 0: CRAWL DATA (Thu thập dữ liệu) ---
+ℹ️ [Running] Crawl_Data_Process: Bắt đầu khởi động trình duyệt để cào dữ liệu...
+🕷️ [Crawl] Đang truy cập: https://cellphones.com.vn/laptop.html
+🔥 Lỗi Fatal Crawl: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://cellphones.com.vn/laptop.html
+Call log:
+  - navigating to "https://cellphones.com.vn/laptop.html", waiting until "load"
+
+❌ [Failed] Crawl_Data_Process: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://cellphones.com.vn/laptop.html
+Call log:
+  - navigating to "https://cellphones.com.vn/laptop.html", waiting until "load"
+
+
+--- BƯỚC 1: STAGING (Nạp vùng đệm) ---
+ℹ️ [Running] Staging_Load_Process: Bắt đầu quét file CSV để nạp Staging...
+⚠️ Không tìm thấy file dữ liệu mới nào trong 'data/raw'.
+✅ [Success] Staging_Load_Process: Không có file mới để nạp.
+
+--- BƯỚC 2: DATA WAREHOUSE (Làm sạch & Lưu kho) ---
+ℹ️ [Running] ETL_DW_Daily: Bắt đầu nạp dữ liệu vào DW...
+📥 Đang đọc dữ liệu từ Staging...
+🔄 [Transform] Đang xử lý và làm sạch dữ liệu...
+   -> Dữ liệu sạch: 10 dòng (Đã loại 0 dòng rác)
+🚀 Đang nạp vào Dimensions & Fact...
+✅ THÀNH CÔNG: Đã nạp 10 dòng vào Fact_Laptop.
+✅ [Success] ETL_DW_Daily: Nạp DW thành công 10 dòng.
+
+--- BƯỚC 3: DATA MART (Tổng hợp báo cáo) ---
+ℹ️ [Running] ETL_DataMart_Daily: Bắt đầu tổng hợp dữ liệu sang bảng Agg_LaptopSummary...
+📊 Đang tính toán các chỉ số tổng hợp từ DW...
+🚀 Đang nạp 3 dòng vào bảng Agg_LaptopSummary...
+✅ THÀNH CÔNG: Đã cập nhật bảng Agg_LaptopSummary cho 3 nhãn hàng.
+✅ [Success] ETL_DataMart_Daily: Đã tổng hợp 3 dòng vào Agg_LaptopSummary.
+
+✅ [Job] HOÀN TẤT TOÀN BỘ QUY TRÌNH LÚC: 16:56:17
+==============================================================
+
