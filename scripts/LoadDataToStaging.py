@@ -15,7 +15,7 @@ def run_staging_process():
     raw_path = os.path.join(base_dir, 'data', 'raw')
     processed_path = os.path.join(base_dir, 'data', 'processed')
 
-    # Tạo thư mục processed nếu chưa có (để lưu bản sao file sau khi xong)
+    # Tạo thư mục processed nếu chưa có (để di chuyển file sau khi xong)
     if not os.path.exists(processed_path):
         os.makedirs(processed_path)
 
@@ -56,8 +56,8 @@ def run_staging_process():
                 # Kiểm tra nếu file rỗng
                 if df.empty:
                     print(f"   ⚠️ File {file_name} rỗng, bỏ qua.")
-                    # Copy sang processed để lưu vết thay vì move
-                    shutil.copy(file_path, os.path.join(processed_path, file_name))
+                    # Vẫn di chuyển sang processed để lần sau không đọc lại
+                    shutil.move(file_path, os.path.join(processed_path, file_name))
                     continue
 
                 # Chuẩn bị câu lệnh Insert
@@ -96,10 +96,10 @@ def run_staging_process():
                 
                 print(f"   ✅ Đã nạp {rows_in_file} dòng.")
 
-                # 6. Copy file đã nạp xong sang thư mục 'processed'
-                # SỬA ĐỔI: Dùng shutil.copy thay vì shutil.move để giữ nguyên file gốc ở data/raw
-                shutil.copy(file_path, os.path.join(processed_path, file_name))
-                print(f"   📦 Đã SAO CHÉP file vào 'data/processed' (file gốc vẫn còn).")
+                # 6. Di chuyển file đã nạp xong sang thư mục 'processed'
+                # Đây là bước quan trọng để tránh nạp trùng lặp lần sau
+                shutil.move(file_path, os.path.join(processed_path, file_name))
+                print(f"   📦 Đã chuyển file vào 'data/processed'.")
 
             except Exception as e_file:
                 print(f"   ❌ Lỗi khi xử lý file {file_name}: {e_file}")

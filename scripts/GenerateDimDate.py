@@ -2,16 +2,21 @@ import pandas as pd
 from db_connector import get_connection
 from datetime import datetime
 
-def populate_dim_date(start_year=2023, end_year=2030):
+def populate_dim_date(start_year, end_year):
     """
     Hàm tạo dữ liệu ngày tháng tự động cho bảng Dim_Date
     """
-    print(f"📅 Đang tạo dữ liệu thời gian từ {start_year} đến {end_year}...")
+    print(f"📅 Đang tạo dữ liệu thời gian từ năm {start_year} đến {end_year}...")
     
     # 1. Tạo danh sách ngày liên tục
     start_date = f"{start_year}-01-01"
     end_date = f"{end_year}-12-31"
-    date_range = pd.date_range(start=start_date, end=end_date, freq='D')
+    
+    try:
+        date_range = pd.date_range(start=start_date, end=end_date, freq='D')
+    except Exception as e:
+        print(f"❌ Lỗi tạo khoảng thời gian: {e}")
+        return
     
     # 2. Kết nối Database DW
     conn = get_connection('dw')
@@ -45,15 +50,25 @@ def populate_dim_date(start_year=2023, end_year=2030):
         
     # 4. Thực thi Insert
     try:
-        print(f"⏳ Đang nạp {len(val_list)} dòng vào Dim_Date...")
-        cursor.executemany(sql, val_list)
-        conn.commit()
-        print(f"✅ Thành công! Đã nạp lịch đến năm {end_year}.")
+        if val_list:
+            print(f"⏳ Đang nạp {len(val_list)} dòng vào Dim_Date...")
+            cursor.executemany(sql, val_list)
+            conn.commit()
+            print(f"✅ THÀNH CÔNG! Đã nạp lịch từ {start_year} đến {end_year}.")
+        else:
+            print("⚠️ Không có dữ liệu ngày tháng nào được tạo.")
+            
     except Exception as e:
-        print(f"❌ Lỗi: {e}")
+        print(f"❌ Lỗi khi Insert vào DB: {e}")
     finally:
-        cursor.close()
-        conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
 
+# --- CẤU HÌNH NĂM CẦN TẠO ---
 if __name__ == "__main__":
-    populate_dim_date()
+    # 👇👇👇 SỬA NĂM MUỐN TẠO Ở ĐÂY 👇👇👇
+    START_YEAR = 2023
+    END_YEAR = 2030
+    # ---------------------------------------
+    
+    populate_dim_date(START_YEAR, END_YEAR)
