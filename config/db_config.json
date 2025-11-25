@@ -1,0 +1,30 @@
+{
+    "control": {
+        "host": "localhost",
+        "user": "root",
+        "password": "123",
+        "database": "control", 
+        "port": 3306
+    },
+    "staging": {
+        "host": "localhost",
+        "user": "root",
+        "password": "123",
+        "database": "staging",
+        "port": 3306
+    },
+    "dw": {
+        "host": "localhost",
+        "user": "root",
+        "password": "123",
+        "database": "dw_laptop",
+        "port": 3306
+    },
+    "datamart": {
+        "host": "localhost",
+        "user": "root",
+        "password": "123",
+        "database": "datamart",
+        "port": 3306
+    }
+}
