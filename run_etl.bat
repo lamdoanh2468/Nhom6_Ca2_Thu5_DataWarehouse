@@ -1,5 +1,5 @@
 @echo off
-cd /d D:\LaptopDW
+cd /d D:\LaptopDW\
 
 :: Không cần set utf-8 nữa vì Python lo rồi, nhưng để cũng không sao
 set PYTHONIOENCODING=utf-8
