@@ -98,8 +98,8 @@ def run_staging_process():
 
                 # 6. Di chuyển file đã nạp xong sang thư mục 'processed'
                 # Đây là bước quan trọng để tránh nạp trùng lặp lần sau
-                shutil.move(file_path, os.path.join(processed_path, file_name))
-                print(f"   📦 Đã chuyển file vào 'data/processed'.")
+                shutil.copy(file_path, os.path.join(processed_path, file_name))
+                print(f"   📦 Đã copy file vào 'data/processed'.")
 
             except Exception as e_file:
                 print(f"   ❌ Lỗi khi xử lý file {file_name}: {e_file}")
