@@ -1,29 +1,41 @@
 import os
 import time
-import random
 import pandas as pd
 from datetime import datetime
 from playwright.sync_api import sync_playwright
-from db_connector import log_etl  # Hàm ghi log chung
+# 👇 1. THÊM get_connection VÀO ĐÂY
+from db_connector import log_etl, get_connection 
 
 def crawl_data_from_source():
     process_name = "Crawl_Data_Process"
+    
+    # 👇 2. THÊM ĐOẠN CHECK KẾT NỐI NÀY
+    print("🔌 Đang kiểm tra kết nối Database trước khi cào...")
+    conn_check = get_connection('control')
+    if not conn_check:
+        print("❌ Lỗi: Không thể kết nối Database Control. Hủy bỏ việc cào dữ liệu.")
+        return # Dừng ngay, không mở trình duyệt
+    else:
+        print("✅ Kết nối Database ổn định. Tiếp tục...")
+        conn_check.close() # Đóng kết nối kiểm tra
+    # ---------------------------------------------------------
+
     log_etl(process_name, "Running", "Bắt đầu khởi động trình duyệt để cào dữ liệu...")
     
     data_list = []
     
     try:
         with sync_playwright() as p:
-            # 1. Mở trình duyệt (headless=True để chạy ngầm, False để hiện lên xem)
-            browser = p.chromium.launch(headless=True)
+            # 1. Mở trình duyệt
+            browser = p.chromium.launch(headless=True) # Sửa thành False nếu muốn xem chạy
             page = browser.new_page()
             
             url = "https://cellphones.com.vn/laptop.html"
             print(f"🕷️ [Crawl] Đang truy cập: {url}")
             page.goto(url, timeout=60000)
             
-            # 2. Cuộn trang để tải thêm sản phẩm (Lazy load)
-            for _ in range(5):  # Cuộn 5 lần, tăng lên nếu muốn lấy nhiều hơn
+            # 2. Cuộn trang
+            for _ in range(5):
                 page.mouse.wheel(0, 5000)
                 time.sleep(2)
             
@@ -37,14 +49,13 @@ def crawl_data_from_source():
                 browser.close()
                 return
 
-            # 4. Duyệt qua từng sản phẩm để lấy thông tin sơ bộ & Link
+            # 4. Duyệt qua từng sản phẩm lấy Link
             links_to_scrape = []
-            for i in range(min(count, 5)):  # Lấy thử 20 sản phẩm đầu tiên để test
+            for i in range(min(count, 5)): 
                 try:
                     item = product_items.nth(i)
                     name = item.locator(".product__name h3").inner_text()
                     
-                    # Xử lý giá (có thể có khuyến mãi hoặc không)
                     price_locator = item.locator(".product__price--show")
                     if price_locator.count() > 0:
                         price = price_locator.inner_text().replace('₫', '').replace('.', '').strip()
@@ -65,24 +76,18 @@ def crawl_data_from_source():
             
             print(f"🚀 [Crawl] Bắt đầu vào chi tiết {len(links_to_scrape)} sản phẩm...")
 
-            # 5. Vào từng trang chi tiết để lấy thông số kỹ thuật
+            # 5. Vào từng trang chi tiết
             for product in links_to_scrape:
                 try:
                     print(f"   -> Đang xem: {product['Name']}...")
                     page.goto(product['links_href'], timeout=60000)
-                    time.sleep(1) # Nghỉ xíu để tránh bị chặn
+                    time.sleep(1)
                     
-                    # Lấy bảng thông số kỹ thuật (Technical Specs)
-                    # Lưu ý: Selector này có thể thay đổi tùy giao diện web thực tế
-                    # Đây là ví dụ logic, bạn cần F12 trên web để check selector chính xác
-                    
-                    # Hàm phụ trợ lấy text an toàn
                     def get_text(selector):
                         if page.locator(selector).count() > 0:
                             return page.locator(selector).first.inner_text().strip()
                         return ""
 
-                    # Map dữ liệu (Selector mẫu - Cần điều chỉnh theo thực tế CellphoneS)
                     product["CpuType"] = get_text("text=Loại CPU >> xpath=../following-sibling::div")
                     product["Ram"] = get_text("text=Dung lượng RAM >> xpath=../following-sibling::div")
                     product["Storage"] = get_text("text=Ổ cứng >> xpath=../following-sibling::div")
@@ -106,14 +111,15 @@ def crawl_data_from_source():
 
         df = pd.DataFrame(data_list)
         
-        # Tạo đường dẫn: D:/LaptopDW/data/raw/
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        raw_path = os.path.join(base_dir, 'data', 'raw')
+        # Sử dụng os.getcwd() để đảm bảo đường dẫn đúng khi chạy từ Scheduler
+        # Giả sử file CrawData.py nằm trong D:\LaptopDW\scripts -> Lùi 1 cấp để ra D:\LaptopDW
+        # Tuy nhiên, Scheduler đã set thư mục làm việc là D:\LaptopDW rồi, nên ta dùng 'data/raw' trực tiếp
+        
+        raw_path = os.path.join(os.getcwd(), 'data', 'raw')
         
         if not os.path.exists(raw_path):
             os.makedirs(raw_path)
 
-        # Tên file: laptop_YYYYMMDD_HHMMSS.csv
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"laptop_{timestamp}.csv"
         full_path = os.path.join(raw_path, filename)

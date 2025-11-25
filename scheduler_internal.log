@@ -99,3 +99,38 @@ Call log:
 ✅ [Job] HOÀN TẤT TOÀN BỘ QUY TRÌNH LÚC: 16:56:17
 ==============================================================
 
+
+🚀 HỆ THỐNG KHỞI ĐỘNG LẠI VÀO LÚC: 2025-11-25 19:32:34.593955
+📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
+🧪 Đang chạy chế độ TEST. Giờ kích hoạt: 19:35
+⏳ Đang chờ đến 19:35 để chạy...
+
+========== BẮT ĐẦU JOB LÚC: 2025-11-25 19:35:00 ==========
+
+--- BƯỚC 0: CRAWL DATA (Thu thập dữ liệu) ---
+🔌 Đang kiểm tra kết nối Database trước khi cào...
+❌ Lỗi kết nối Database (control): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+❌ Lỗi: Không thể kết nối Database Control. Hủy bỏ việc cào dữ liệu.
+
+--- BƯỚC 1: STAGING (Nạp vùng đệm) ---
+❌ Lỗi kết nối Database (control): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+⚠️ Không tìm thấy file dữ liệu mới nào trong 'data/raw'.
+❌ Lỗi kết nối Database (control): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+
+--- BƯỚC 2: DATA WAREHOUSE (Làm sạch & Lưu kho) ---
+❌ Lỗi kết nối Database (control): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+❌ Lỗi kết nối Database (staging): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+
+--- BƯỚC 3: DATA MART (Tổng hợp báo cáo) ---
+❌ Lỗi kết nối Database (control): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+❌ Lỗi kết nối Database (dw): [Errno 2] No such file or directory: 'D:\\LaptopDW\\config\\db_config.json'
+❌ Không kết nối được Data Warehouse.
+
+✅ [Job] HOÀN TẤT TOÀN BỘ QUY TRÌNH LÚC: 19:35:00
+==============================================================
+
+
+🚀 HỆ THỐNG KHỞI ĐỘNG LẠI VÀO LÚC: 2025-11-25 20:00:39.429261
+📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
+🧪 Đang chạy chế độ TEST. Giờ kích hoạt: 19:45
+⏳ Đang chờ đến 19:45 để chạy...
