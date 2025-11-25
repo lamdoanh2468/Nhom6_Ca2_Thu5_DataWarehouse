@@ -99,6 +99,7 @@ Call log:
 ✅ [Job] HOÀN TẤT TOÀN BỘ QUY TRÌNH LÚC: 16:56:17
 ==============================================================
 
+<<<<<<< HEAD
 
 🚀 HỆ THỐNG KHỞI ĐỘNG LẠI VÀO LÚC: 2025-11-25 19:32:34.593955
 📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
@@ -134,3 +135,5 @@ Call log:
 📂 File log được lưu tại: D:\LaptopDW\scheduler_internal.log
 🧪 Đang chạy chế độ TEST. Giờ kích hoạt: 19:45
 ⏳ Đang chờ đến 19:45 để chạy...
+=======
+>>>>>>> 37e85c8e437488d3877e4c3075e20262db63a72b
