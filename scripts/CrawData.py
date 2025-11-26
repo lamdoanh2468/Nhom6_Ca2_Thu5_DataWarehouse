@@ -51,7 +51,7 @@ def crawl_data_from_source():
 
             # 4. Duyệt qua từng sản phẩm lấy Link
             links_to_scrape = []
-            for i in range(min(count, 5)): 
+            for i in range(min(count, 10)): 
                 try:
                     item = product_items.nth(i)
                     name = item.locator(".product__name h3").inner_text()

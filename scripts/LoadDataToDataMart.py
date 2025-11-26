@@ -6,12 +6,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 def run_datamart_process():
-    # 5.1.2.1 Khởi tạo process_name, kết nối data warehouse và data mart (chuẩn bị)
+    # 5.1.2.1 Khởi tạo process_name, kết nối data warehouse và data mart 
     process_name = "ETL_DataMart_Daily"
     conn_dw = None
     conn_dm = None
+
     # 5.1.2.2 log_etl(process_name, "Running", "Bắt đầu tổng hợp dữ liệu sang bảng Agg_LaptopSummary")
     log_etl(process_name, "Running", "Bắt đầu tổng hợp dữ liệu sang bảng Agg_LaptopSummary...")
+    
     try:
         # 5.1.2.3 Kiểm tra/kết nối data warehouse
         conn_dw = get_connection('dw')
@@ -22,20 +24,18 @@ def run_datamart_process():
         # 5.1.2.4 Thực thi câu lệnh SQL SELECT lấy dữ liệu tổng hợp giữa bảng fact_laptop và dim_brand
         sql_extract = """
             SELECT 
-                f.DateKey,
-                b.brand_name,
-                COUNT(f.laptop_id) as TotalProducts,
-                AVG(f.price) as AvgPrice,
-                MIN(f.price) as MinPrice,
-                MAX(f.price) as MaxPrice,
-                AVG(f.ram_storage_gb) as AvgRAM,
-                AVG(f.storage_capacity_gb) as AvgStorage
-            FROM Fact_Laptop f
-            JOIN Dim_Brand b ON f.brand_id = b.brand_id
-            GROUP BY f.DateKey, b.brand_name;
+                DateKey, 
+                BrandName, 
+                TotalProducts, 
+                AvgPrice,
+                MinPrice, 
+                MaxPrice, 
+                AvgRAM, 
+                AvgStorage
+            FROM View_Agg_Laptop_Daily
         """
         
-        print("📊 Đang tính toán các chỉ số tổng hợp từ DW...")
+        print("📊 Đang lấy dữ liệu từ View DW...")
         df_analysis = pd.read_sql(sql_extract, conn_dw)
 
         # 5.1.2.5 Đóng kết nối database data warehouse
@@ -59,18 +59,7 @@ def run_datamart_process():
         print(f"🚀 Đang nạp {len(df_analysis)} dòng vào bảng Agg_LaptopSummary...")
         
         # 5.1.2.9 Thực thi câu lệnh SQL chèn dữ liệu vào bảng Agg_LaptopSummary
-        sql_load = """
-            INSERT INTO Agg_LaptopSummary 
-            (DateKey, BrandName, TotalProducts, AvgPrice, MinPrice, MaxPrice, AvgRAM, AvgStorage)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE
-                TotalProducts = VALUES(TotalProducts),
-                AvgPrice = VALUES(AvgPrice),
-                MinPrice = VALUES(MinPrice),
-                MaxPrice = VALUES(MaxPrice),
-                AvgRAM = VALUES(AvgRAM),
-                AvgStorage = VALUES(AvgStorage);
-        """
+        sql_load = "CALL sp_Load_Agg_LaptopSummary(%s, %s, %s, %s, %s, %s, %s, %s)"
         
         # 5.1.2.10 Chuyển DataFrame df_analysis sang danh sách tuple
         data_tuples = [tuple(x) for x in df_analysis.to_numpy()]
@@ -82,6 +71,7 @@ def run_datamart_process():
         conn_dm.commit()
         
         print(f"✅ THÀNH CÔNG: Đã cập nhật bảng Agg_LaptopSummary cho {len(data_tuples)} nhãn hàng.")
+        
         # 5.1.2.13 log_etl("Success", "Đã tổng hợp n dòng vào Agg_Summary", n)
         log_etl(process_name, "Success", f"Đã tổng hợp {len(data_tuples)} dòng vào Agg_LaptopSummary.", len(data_tuples))
         
